@@ -29,7 +29,7 @@ func createService(stage *models.Stage) error {
 	service.ObjectMeta.SetName(stage.Name)
 	service.ObjectMeta.SetNamespace(stage.Namespace)
 	service.ObjectMeta.Labels[models.LabelKey] = stage.Name
-	service.Spec.Ports[0] = api.ServicePort{Port: int(stage.Port), TargetPort: intstr.FromString(stage.Name)}
+	service.Spec.Ports[0] = api.ServicePort{Port: int32(stage.Port), TargetPort: intstr.FromString(stage.Name)}
 	service.Spec.Selector[models.LabelKey] = stage.Name
 	if _, err := k8sClient.Services(stage.Namespace).Create(service); err != nil {
 		log.Println("Create service err :", err)

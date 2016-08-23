@@ -33,14 +33,14 @@ func createRC(stage *models.Stage) error {
 	rc.SetName(stage.Name)
 	rc.SetNamespace(stage.Namespace)
 	rc.Labels[models.LabelKey] = stage.Name
-	rc.Spec.Replicas = int(stage.Replicas)
+	rc.Spec.Replicas = int32(stage.Replicas)
 	rc.Spec.Template.SetName(stage.Name)
 	rc.Spec.Template.Labels[models.LabelKey] = stage.Name
 	rc.Spec.Template.Spec.Containers[0] = api.Container{
 		Ports: []api.ContainerPort{
 			api.ContainerPort{
 				Name:          stage.Name,
-				ContainerPort: int(stage.Port),
+				ContainerPort: int32(stage.Port),
 			},
 		},
 		Name:            stage.Name,
