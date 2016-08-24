@@ -7,32 +7,47 @@ import (
 	"gopkg.in/macaron.v1"
 )
 
-// V1POSTPipeline handler for HTTP POST
-func V1POSTPipeline(ctx *macaron.Context, reqData models.PipelineSpecTemplate) (int, []byte) {
+// POSTPipeline new a pipeline
+func POSTPipeline(ctx *macaron.Context, reqData models.PipelineTemplate) (int, []byte) {
 	return http.StatusOK, []byte("")
 }
 
-// V1PUTPipeline handler for HTTP PUT
-func V1PUTPipeline(ctx *macaron.Context) (int, []byte) {
-	return 0, []byte("")
-}
-
-// V1GETPipeline handler for HTTP GET
-func V1GETPipeline(ctx *macaron.Context) (int, []byte) {
-	return 0, []byte("")
-}
-
-// V1DELETEPipeline handler for HTTP DELETE
-func V1DELETEPipeline(ctx *macaron.Context, reqData models.PipelineSpecTemplate) (int, []byte) {
+// DELETEPipeline delete the pipeline with pid
+func DELETEPipelinePID(ctx *macaron.Context) (int, []byte) {
 	return http.StatusOK, []byte("")
 }
 
-// V1RunPipeline handler of run pipeline
-func V1RunPipeline(ctx *macaron.Context) (int, []byte) {
-	return 0, []byte("")
+// PUTPipelinePID update the pipeline with pid
+func PUTPipelinePID(ctx *macaron.Context, reqData models.PipelineTemplate) (int, []byte) {
+	return http.StatusOK, []byte("")
 }
 
-// V1GETPipelineStatus handler of pipeline status for HTTP GET
-func V1GETPipelineStatus(ctx *macaron.Context) (int, []byte) {
-	return 0, []byte("")
+// GETPipelinePID get the pipeline with pid
+func GETPipelinePID(ctx *macaron.Context) (int, []byte) {
+	return http.StatusOK, []byte("")
+}
+
+// POSTPipelinePID exec the pipeline with pid
+func POSTPipelinePID(ctx *macaron.Context) (int, []byte) {
+	return http.StatusOK, []byte("")
+}
+
+// DELETEPipeline delete the pipeline with pid
+func DELETEPipelinePIDPvID(ctx *macaron.Context) (int, []byte) {
+	return http.StatusOK, []byte("")
+}
+
+// GETPipelinePIDPvID get the pipeline result with pid and pvid
+func GETPipelinePIDPvID(ctx *macaron.Context) (int, []byte) {
+	return http.StatusOK, []byte("")
+}
+
+// GETPipelinePIDPvIDLogs get system logs with pid and pvid
+func GETPipelinePIDPvIDLogs(ctx *macaron.Context) (int, []byte) {
+	return http.StatusOK, []byte("")
+}
+
+// GETPipelineNamespaceName get pipeline list with pipeline name and namespace
+func GETPipelineNamespaceName(ctx *macaron.Context) (int, []byte) {
+	return http.StatusOK, []byte("")
 }
