@@ -1,19 +1,19 @@
 package handler
 
-// BaseResp base responce for all responce
-type BaseResp struct {
-	Code int64  `json:"code"`
-	Msg  string `json:"msg"`
-}
+import (
+	"encoding/json"
 
-const (
-	// CodeSuccess :
-	CodeSuccess = 200
-	// CodeError :
-	CodeError = 500
-
-	// MsgSuccess :
-	MsgSuccess = "success"
-	// MsgError :
-	MsgError = "error"
+	"github.com/go-macaron/binding"
 )
+
+func requestErrBytes(files []string, err error) (int, []byte) {
+	reqErrs := binding.Errors{
+		binding.Error{
+			FieldNames:     files,
+			Classification: "DeserializationError",
+			Message:        err.Error(),
+		},
+	}
+	errOutput, _ := json.Marshal(reqErrs)
+	return 400, errOutput
+}

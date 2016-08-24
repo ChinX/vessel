@@ -25,6 +25,5 @@ type Point struct {
 	Updated    *time.Time `json:"updated"`
 	Deleted    *time.Time `json:"deleted"`
 	From       []string
-	To         []string
-	Stage      *Stage
+	Info       *Stage
 }

@@ -3,6 +3,7 @@ package models
 import (
 	"time"
 
+	"github.com/containerops/vessel/utils/timer"
 	"k8s.io/kubernetes/pkg/api/v1"
 )
 
@@ -29,6 +30,7 @@ type Stage struct {
 	Created       *time.Time  `json:"created" `
 	Updated       *time.Time  `json:"updated"`
 	Deleted       *time.Time  `json:"deleted"`
+	Hourglass     *timer.Hourglass
 }
 
 // StageVersion data
