@@ -10,8 +10,7 @@ import (
 
 // V1POSTPipeline handler for HTTP POST
 func V1POSTPipeline(ctx *macaron.Context, reqData models.PipelineSpecTemplate) (int, []byte) {
-	bytes := pipeline.StartPipeline(&reqData)
-	return http.StatusOK, bytes
+	return http.StatusOK, []byte("")
 }
 
 // V1PUTPipeline handler for HTTP PUT
@@ -26,8 +25,7 @@ func V1GETPipeline(ctx *macaron.Context) (int, []byte) {
 
 // V1DELETEPipeline handler for HTTP DELETE
 func V1DELETEPipeline(ctx *macaron.Context, reqData models.PipelineSpecTemplate) (int, []byte) {
-	bytes := pipeline.StopPipeline(&reqData)
-	return http.StatusOK, bytes
+	return http.StatusOK, []byte("")
 }
 
 // V1RunPipeline handler of run pipeline
