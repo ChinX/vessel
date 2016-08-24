@@ -12,7 +12,7 @@ func POSTPipeline(ctx *macaron.Context, reqData models.PipelineTemplate) (int, [
 	return http.StatusOK, []byte("")
 }
 
-// DELETEPipeline delete the pipeline with pid
+// DELETEPipelinePID delete the pipeline with pid
 func DELETEPipelinePID(ctx *macaron.Context) (int, []byte) {
 	return http.StatusOK, []byte("")
 }
@@ -32,7 +32,7 @@ func POSTPipelinePID(ctx *macaron.Context) (int, []byte) {
 	return http.StatusOK, []byte("")
 }
 
-// DELETEPipeline delete the pipeline with pid
+// DELETEPipelinePIDPvID stop the pipeline with pid and pvid
 func DELETEPipelinePIDPvID(ctx *macaron.Context) (int, []byte) {
 	return http.StatusOK, []byte("")
 }

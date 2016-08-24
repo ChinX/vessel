@@ -1,10 +1,10 @@
 package router
 
 import (
-	"gopkg.in/macaron.v1"
-	"github.com/go-macaron/binding"
 	"github.com/chinx/vessel/models"
 	"github.com/containerops/vessel/handler"
+	"github.com/go-macaron/binding"
+	"gopkg.in/macaron.v1"
 )
 
 // SetRouters set routers to macaron
