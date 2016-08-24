@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/containerops/vessel/models"
-	"github.com/containerops/vessel/module/pipeline"
 	"gopkg.in/macaron.v1"
 )
 
