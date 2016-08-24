@@ -4,19 +4,20 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
-	"strings"
 )
 
 var (
 	uuidLock *sync.Mutex
 	lastNum  int64
-	count    int = 0
+	count    int
 )
 
 func init() {
 	uuidLock = new(sync.Mutex)
+	count = 0
 }
 
 // UUID generate unique values
@@ -25,7 +26,7 @@ func UUID() string {
 	result := time.Now().UnixNano()
 	if lastNum == result {
 		count++
-	}else{
+	} else {
 		count = 0
 		lastNum = result
 	}
@@ -40,7 +41,8 @@ func MD5String(input string) string {
 	return hex.EncodeToString(h.Sum(nil))
 }
 
-func JsonStrToSlice(jsonStr string) []string {
-	jsonStr = strings.Replace(jsonStr," ","", -1)
+// JSONStrToSlice Json str to slice
+func JSONStrToSlice(jsonStr string) []string {
+	jsonStr = strings.Replace(jsonStr, " ", "", -1)
 	return strings.Split(strings.Trim(jsonStr, ","), ",")
 }

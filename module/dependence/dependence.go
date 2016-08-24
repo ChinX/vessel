@@ -49,8 +49,8 @@ func checkPoint(points []*models.Point) (*models.Point, error) {
 	starPointCount := 0
 	endPointCount := 0
 	for _, point := range points {
-		point.To = utils.JsonStrToSlice(point.Triggers)
-		point.From = utils.JsonStrToSlice(point.Conditions)
+		point.To = utils.JSONStrToSlice(point.Triggers)
+		point.From = utils.JSONStrToSlice(point.Conditions)
 		switch point.Type {
 		case models.StarPoint:
 			if point.From[0] != "" {
@@ -89,7 +89,7 @@ func checkPoint(points []*models.Point) (*models.Point, error) {
 }
 
 func getPoint(stage *models.Stage, points []*models.Point) (*models.Point, error) {
-	dependencies := utils.JsonStrToSlice(stage.Dependencies)
+	dependencies := utils.JSONStrToSlice(stage.Dependencies)
 	for _, point := range points {
 		for _, trigger := range point.To {
 			if stage.Name == trigger {
