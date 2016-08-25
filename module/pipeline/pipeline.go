@@ -5,7 +5,7 @@ import (
 
 	"github.com/containerops/vessel/models"
 	"github.com/containerops/vessel/module/dependence"
-	"github.com/chinx/vessel/module/scheduler"
+	"github.com/containerops/vessel/module/scheduler"
 )
 
 // CreatePipeline new pipeline with PipelineTemplate
@@ -40,32 +40,43 @@ func CreatePipeline(pipelineTemplate *models.PipelineTemplate) []byte {
 	return nil
 }
 
-func StartPipeline(pID uint) []byte {
+func StartPipeline(pID uint64) []byte {
 	log.Println("Start pipeline")
 	// Get pipeline form db
 	pipeline := &models.Pipeline{}
-	pointMap,err := dependence.ParsePipeline(pipeline)
+	pointMap, err := dependence.ParsePipeline(pipeline)
 	if err != nil {
 		bytes, _ := formatOutputBytes()
 		return bytes
 	}
-	scheduler.StartStage(pointMap)
+	schedulingRes := scheduler.StartExecute(pointMap, models.StartPointMark)
+	log.Println(schedulingRes)
 	return nil
 }
 
-func StopPipeline(pID uint, pvID uint) []byte {
+func StopPipeline(pID uint64, pvID uint64) []byte {
+	log.Println("Stop pipeline")
+	// Get pipeline form db
+	pipeline := &models.Pipeline{}
+	pointMap, err := dependence.ParsePipeline(pipeline)
+	if err != nil {
+		bytes, _ := formatOutputBytes()
+		return bytes
+	}
+	schedulingRes := scheduler.StopExecute(pointMap, models.StartPointMark)
+	log.Println(schedulingRes)
 	return nil
 }
 
-func RemovePipeline(pID uint) []byte {
+func RemovePipeline(pID uint64) []byte {
 	return nil
 }
 
-func RenewPipeline(pID uint, pipelineTemplate *models.PipelineTemplate) []byte {
+func RenewPipeline(pID uint64, pipelineTemplate *models.PipelineTemplate) []byte {
 	return nil
 }
 
-func GetPipeline(pID uint) []byte {
+func GetPipeline(pID uint64) []byte {
 	return nil
 }
 

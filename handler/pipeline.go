@@ -60,7 +60,7 @@ func DELETEPipelinePIDPvID(ctx *macaron.Context) (int, []byte) {
 	if err != nil {
 		return requestErrBytes([]string{"pvid"}, err)
 	}
-	return http.StatusOK, pipeline.StopPipeline(pID,pvID)
+	return http.StatusOK, pipeline.StopPipeline(pID, pvID)
 }
 
 // GETPipelinePIDPvID get the pipeline result with pid and pvid

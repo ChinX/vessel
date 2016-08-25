@@ -11,6 +11,9 @@ const (
 	CheckPoint = "Check"
 	// EndPoint point type
 	EndPoint = "End"
+
+	StartPointMark = "$StartPointMark$"
+	EndPointMark   = "$EndPointMark$"
 )
 
 // Point data
@@ -24,6 +27,4 @@ type Point struct {
 	Created    *time.Time `json:"created" `
 	Updated    *time.Time `json:"updated"`
 	Deleted    *time.Time `json:"deleted"`
-	From       []string
-	Info       *Stage
 }

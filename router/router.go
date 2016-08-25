@@ -1,8 +1,8 @@
 package router
 
 import (
-	"github.com/chinx/vessel/models"
 	"github.com/containerops/vessel/handler"
+	"github.com/containerops/vessel/models"
 	"github.com/go-macaron/binding"
 	"gopkg.in/macaron.v1"
 )
