@@ -49,7 +49,7 @@ func StartPipeline(pID uint64) []byte {
 		bytes, _ := formatOutputBytes()
 		return bytes
 	}
-	schedulingRes := scheduler.StartExecute(pointMap, models.StartPointMark)
+	schedulingRes := scheduler.Start(pointMap, models.StartPointMark)
 	log.Println(schedulingRes)
 	return nil
 }
@@ -63,7 +63,7 @@ func StopPipeline(pID uint64, pvID uint64) []byte {
 		bytes, _ := formatOutputBytes()
 		return bytes
 	}
-	schedulingRes := scheduler.StopExecute(pointMap, models.StartPointMark)
+	schedulingRes := scheduler.Stop(pointMap, models.StartPointMark)
 	log.Println(schedulingRes)
 	return nil
 }

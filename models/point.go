@@ -6,7 +6,7 @@ import (
 
 const (
 	// StarPoint point type
-	StarPoint = "Star"
+	StarPoint = "Start"
 	// CheckPoint point type
 	CheckPoint = "Check"
 	// EndPoint point type

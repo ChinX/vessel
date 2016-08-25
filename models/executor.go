@@ -20,8 +20,6 @@ type Executor interface {
 	Start(readyMap map[string]bool, finishChan chan *ExecutedResult) bool
 	Stop(readyMap map[string]bool, finishChan chan *ExecutedResult) bool
 	GetFrom() []string
-	SetInfo(info *Stage)
-	HasInfo() bool
 }
 
 // ExecutedResult executor operating result

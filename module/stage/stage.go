@@ -11,6 +11,10 @@ import (
 
 // StartStage start stage workflow
 func StartStage(stage *models.Stage, finishChan chan *models.ExecutedResult) {
+	if stage.Name == models.EndPointMark {
+		finishChan <- fillSchedulingResult(stage, models.ResultSuccess, "")
+		return
+	}
 	//TODO:Save stageVersion
 	//stageVersion :=
 	//stageVersion.Status = models.StateReady

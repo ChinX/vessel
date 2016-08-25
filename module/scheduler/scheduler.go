@@ -9,11 +9,11 @@ import (
 
 type schedulerHand func(executor models.Executor, readyMap map[string]bool, finishChan chan *models.ExecutedResult) bool
 
-func StartExecute(executorMap map[string]models.Executor, startMark string) []*models.ExecutedResult {
+func Start(executorMap map[string]models.Executor, startMark string) []*models.ExecutedResult {
 	return execute(executorMap, startMark, startProgress)
 }
 
-func StopExecute(executorMap map[string]models.Executor, startMark string) []*models.ExecutedResult {
+func Stop(executorMap map[string]models.Executor, startMark string) []*models.ExecutedResult {
 	return execute(executorMap, startMark, stopProgress)
 }
 

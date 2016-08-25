@@ -10,6 +10,8 @@ import (
 	"github.com/containerops/vessel/module/point"
 	"github.com/containerops/vessel/utils"
 	"github.com/containerops/vessel/utils/timer"
+	"k8s.io/kubernetes/pkg/util/json"
+	"log"
 )
 
 // CheckPipeline check point dependence
@@ -18,25 +20,34 @@ func CheckPipeline(pipeline *models.Pipeline) error {
 		return err
 	}
 
-	pointMap, err := ParsePipeline(pipeline)
+	executorMap, err := ParsePipeline(pipeline)
 	if err != nil {
 		return err
 	}
 
-	return checkValidity(pointMap, models.StartPointMark)
+	bytes, err := json.Marshal(executorMap)
+	if err != nil {
+		log.Println(err)
+	} else {
+		log.Println(string(bytes))
+	}
+	return checkValidity(executorMap, models.StartPointMark)
 }
 
 // ParsePipeline parse point map from pipeline
 func ParsePipeline(pipeline *models.Pipeline) (map[string]models.Executor, error) {
-	pointMap := make(map[string]models.Executor, 0)
 	hourglass := timer.InitHourglass(time.Duration(pipeline.Timeout) * time.Second)
-
 	//parse user point
-	for _, pointInfo := range pipeline.Points {
-		if err := parsePoint(pointInfo, pointMap); err != nil {
-			return nil, err
-		}
+	pointMap, err := parsePoints(pipeline.Points)
+	if err != nil {
+		return nil, err
 	}
+
+	//endPoint
+	execPoint := pointMap[models.EndPointMark]
+	executorMap := map[string]models.Executor{models.EndPointMark: execPoint}
+	execPoint.Info = &models.Stage{Name: models.EndPointMark}
+	delete(pointMap, models.EndPointMark)
 
 	//parse point from stage
 	for _, stage := range pipeline.Stages {
@@ -44,43 +55,51 @@ func ParsePipeline(pipeline *models.Pipeline) (map[string]models.Executor, error
 			return nil, errors.New("Stage name must be not empty")
 		}
 		if execPoint, ok := pointMap[stage.Name]; ok {
-			if !execPoint.HasInfo() {
+			execPoint.Info = stage
+			executorMap[stage.Name] = execPoint
+			delete(pointMap, stage.Name)
+		} else {
+			if _, ok := executorMap[stage.Name]; ok {
 				return nil, fmt.Errorf("Stage name: %v already exist", stage.Name)
 			}
-			if stage.Dependencies != "" {
-				return nil, fmt.Errorf("Point stage '%v' dependencies must be empty", stage.Name)
-			}
-			execPoint.SetInfo(stage)
-		} else {
 			if stage.Dependencies == "" {
-				return nil, fmt.Errorf("No point stage '%v' dependencies must be not empty", stage.Name)
+				return nil, fmt.Errorf("No point stage: '%v' dependencies must be not empty", stage.Name)
 			}
-			pointMap[stage.Name] = &point.Point{
+			executorMap[stage.Name] = &point.Point{
 				Info: stage,
 				From: utils.JSONStrToSlice(stage.Dependencies),
 			}
 		}
 		stage.Hourglass = hourglass
+		stage.Namespace = pipeline.Namespace
+		stage.PipelineName = pipeline.Name
 	}
-	return pointMap, nil
+	if len(pointMap) > 0 {
+		byteArr, _ := json.Marshal(pointMap)
+		return nil, fmt.Errorf("Pipeline points has unused point %v", string(byteArr))
+	}
+	return executorMap, nil
 }
 
-func parsePoint(pointInfo *models.Point, pointMap map[string]models.Executor) error {
-	triggers := utils.JSONStrToSlice(pointInfo.Triggers)
-	for _, trigger := range triggers {
-		if trigger == "" {
-			trigger = models.EndPointMark
+func parsePoints(points []*models.Point) (map[string]*point.Point, error) {
+	pointMap := make(map[string]*point.Point, 0)
+	for _, pointInfo := range points {
+		triggers := utils.JSONStrToSlice(pointInfo.Triggers)
+		for _, trigger := range triggers {
+			if trigger == "" {
+				trigger = models.EndPointMark
+			}
+			if _, ok := pointMap[trigger]; ok {
+				return nil, fmt.Errorf("Point trigger :%v is already exist", trigger)
+			}
+			conditions := utils.JSONStrToSlice(pointInfo.Conditions)
+			if conditions[0] == "" {
+				conditions[0] = models.StartPointMark
+			}
+			pointMap[trigger] = &point.Point{From: conditions}
 		}
-		if _, ok := pointMap[trigger]; ok {
-			return fmt.Errorf("Point trigger :%v is already exist", trigger)
-		}
-		conditions := utils.JSONStrToSlice(pointInfo.Conditions)
-		if conditions[0] == "" {
-			conditions[0] = models.StartPointMark
-		}
-		pointMap[trigger] = &point.Point{From: conditions}
 	}
-	return nil
+	return pointMap, nil
 }
 
 func checkUserPoint(points []*models.Point) error {
@@ -124,13 +143,16 @@ func checkUserPoint(points []*models.Point) error {
 	return nil
 }
 
-func checkValidity(pointMap map[string]models.Executor, startName string) error {
+func checkValidity(executorMap map[string]models.Executor, startName string) error {
 	pointListMap := make(map[string][]string, 0)
-	for name, execPoint := range pointMap {
+	for name, execPoint := range executorMap {
 		pointFrom := execPoint.GetFrom()
 		for _, from := range pointFrom {
 			//Check stage name is exist
-			if _, ok := pointMap[from]; !ok {
+			if from == models.StartPointMark{
+				continue
+			}
+			if _, ok := executorMap[from]; !ok {
 				return fmt.Errorf("Stage name: %v is not exist", from)
 			}
 
