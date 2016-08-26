@@ -2,11 +2,11 @@ package models
 
 const (
 	// StateReady  operating state ready
-	StateReady = "Ready"
+	StateReady uint = 0//"Ready"
 	// StateRunning  operating state running
-	StateRunning = "Running"
+	StateRunning uint = 1//"Running"
 	// StateDeleted  operating state deleted
-	StateDeleted = "Deleted"
+	StateDeleted uint = 2//"Deleted"
 
 	// ResultSuccess  operating result success
 	ResultSuccess = "OK"
@@ -26,5 +26,5 @@ type Executor interface {
 type ExecutedResult struct {
 	Name   string
 	Status string
-	Result interface{}
+	Detail string
 }

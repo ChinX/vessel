@@ -20,7 +20,7 @@ func DELETEPipelinePID(ctx *macaron.Context) (int, []byte) {
 	if err != nil {
 		return requestErrBytes([]string{"pid"}, err)
 	}
-	return http.StatusOK, pipeline.RemovePipeline(pID)
+	return http.StatusOK, pipeline.DeletePipeline(pID)
 }
 
 // PUTPipelinePID update the pipeline with pid

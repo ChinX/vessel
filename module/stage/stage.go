@@ -6,7 +6,6 @@ import (
 
 	"github.com/containerops/vessel/models"
 	kubeclt "github.com/containerops/vessel/module/kubernetes"
-	"github.com/containerops/vessel/utils"
 )
 
 // StartStage start stage workflow
@@ -43,20 +42,12 @@ func StopStage(stage *models.Stage, finishChan chan *models.ExecutedResult) {
 func fillSchedulingResult(stage *models.Stage, result string, detail string) *models.ExecutedResult {
 	log.Println(fmt.Sprintf("Stage name = %v result is %v, detail is %v", stage.Name, result, detail))
 	stageName := ""
-	namespace := ""
 	if stage != nil {
 		stageName = stage.Name
-		namespace = stage.Namespace
 	}
 	return &models.ExecutedResult{
 		Name:   stageName,
 		Status: result,
-		Result: &models.StageResult{
-			ID:        utils.UUID(),
-			Namespace: namespace,
-			Name:      stageName,
-			Result:    result,
-			Detail:    detail,
-		},
+		Detail: detail,
 	}
 }
