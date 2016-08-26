@@ -6,12 +6,13 @@ import (
 	"strings"
 	"time"
 
+	"log"
+
 	"github.com/containerops/vessel/models"
 	"github.com/containerops/vessel/module/point"
 	"github.com/containerops/vessel/utils"
 	"github.com/containerops/vessel/utils/timer"
 	"k8s.io/kubernetes/pkg/util/json"
-	"log"
 )
 
 // CheckPipeline check point dependence
@@ -149,7 +150,7 @@ func checkValidity(executorMap map[string]models.Executor, startName string) err
 		pointFrom := execPoint.GetFrom()
 		for _, from := range pointFrom {
 			//Check stage name is exist
-			if from == models.StartPointMark{
+			if from == models.StartPointMark {
 				continue
 			}
 			if _, ok := executorMap[from]; !ok {
