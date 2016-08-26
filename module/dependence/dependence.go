@@ -12,7 +12,7 @@ import (
 	"github.com/containerops/vessel/module/point"
 	"github.com/containerops/vessel/utils"
 	"github.com/containerops/vessel/utils/timer"
-	"k8s.io/kubernetes/pkg/util/json"
+	"encoding/json"
 )
 
 // CheckPipeline check point dependence
