@@ -26,7 +26,7 @@ func clientEtcd() (err error) {
 			"port": "4001",
 		},
 	}
-	if etcdClient != nil {
+	if etcd != nil {
 		return nil
 	}
 	endPoints := []string{}
@@ -39,7 +39,7 @@ func clientEtcd() (err error) {
 		Transport:               client.DefaultTransport,
 		HeaderTimeoutPerRequest: time.Second,
 	}
-	etcdClient, err = client.New(cfg)
+	etcd, err = client.New(cfg)
 	if err != nil {
 		return err
 	}

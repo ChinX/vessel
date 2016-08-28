@@ -12,42 +12,41 @@ import (
 )
 
 var (
-	etcdClient client.Client
+	etcd client.Client
 )
 
 const (
-	// ClientErr client start error
-	ClientErr = "ETCD client is not start"
+	// EtcdClientErr etcd client not connected error
+	EtcdClientErr = "ETCD client is not connected"
 )
 
-func getClient() error {
-	if etcdClient == nil {
-		etcdClient = models.EtcdClient
+func checkClient() error {
+	if models.ETCD == nil {
+		if err := models.InitEtcd(); err != nil{
+			return err
+		}
 	}
-	if etcdClient == nil {
-		return clientErr()
+	etcd = models.ETCD
+	if etcd == nil {
+		return errors.New(EtcdClientErr)
 	}
 	return nil
 }
 
-func clientErr() error {
-	return errors.New(ClientErr)
-}
-
 // Get get data from etcd
 func Get(key string) (*client.Response, error) {
-	if err := getClient(); err != nil {
+	if err := checkClient(); err != nil {
 		return nil, err
 	}
-	return client.NewKeysAPI(etcdClient).Get(context.Background(), key, nil)
+	return client.NewKeysAPI(etcd).Get(context.Background(), key, nil)
 }
 
 // Set save data to etcd
 func Set(key string, value string, opts *client.SetOptions) error {
-	if err := getClient(); err != nil {
+	if err := checkClient(); err != nil {
 		return err
 	}
-	_, err := client.NewKeysAPI(etcdClient).Set(context.Background(), key, value, opts)
+	_, err := client.NewKeysAPI(etcd).Set(context.Background(), key, value, opts)
 	return err
 }
 
@@ -112,10 +111,10 @@ func SetDirTTL(key string, timeLife uint64) error {
 
 // Watch on etcd
 func Watch(key string) (client.Watcher, error) {
-	if etcdClient == nil {
-		return nil, clientErr()
+	if err := checkClient(); err != nil{
+		return nil, err
 	}
-	return client.NewKeysAPI(etcdClient).Watcher(key, &client.WatcherOptions{
+	return client.NewKeysAPI(etcd).Watcher(key, &client.WatcherOptions{
 		Recursive: true,
 	}), nil
 }

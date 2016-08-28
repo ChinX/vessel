@@ -47,6 +47,10 @@ func runWeb(c *cli.Context) {
 		log.Println(err)
 		return
 	}
+	if err := models.InitDatabase(); err != nil {
+		log.Println(err)
+		return
+	}
 
 	m := macaron.New()
 
