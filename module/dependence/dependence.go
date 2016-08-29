@@ -7,10 +7,11 @@ import (
 	"time"
 
 	"encoding/json"
+	"log"
+
 	"github.com/containerops/vessel/models"
 	"github.com/containerops/vessel/utils"
 	"github.com/containerops/vessel/utils/timer"
-	"log"
 )
 
 // ParsePipelineVersion parse executor map
@@ -52,7 +53,7 @@ func ParsePipelineVersion(pipelineVsn *models.PipelineVersion) []interface{} {
 		pointVsn, ok := pointVsnMap[stage.Name]
 		if !ok {
 			pointVsn = &models.PointVersion{
-				Kind: models.TemporaryPoint,
+				Kind:       models.TemporaryPoint,
 				Conditions: utils.JSONStrToSlice(stage.Dependencies),
 			}
 			pointVsnMap[stage.Name] = pointVsn

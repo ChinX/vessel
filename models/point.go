@@ -13,8 +13,6 @@ const (
 	// TemporaryPoint point type
 	TemporaryPoint = "Temporary"
 
-
-
 	// StartPointMark start mark
 	StartPointMark = "$StartPointMark$"
 	// EndPointMark end mark

@@ -9,7 +9,7 @@ func CheckCondition(pointVsn *models.PointVersion, readyMap map[string]bool) (bo
 		return meet, ended
 	}
 	for _, condition := range pointVsn.Conditions {
-		if meet := readyMap[condition]; !meet{
+		if meet := readyMap[condition]; !meet {
 			return meet, ended
 		}
 	}

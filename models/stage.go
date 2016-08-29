@@ -3,9 +3,10 @@ package models
 import (
 	"fmt"
 
+	"time"
+
 	"github.com/containerops/vessel/utils/timer"
 	"k8s.io/kubernetes/pkg/api/v1"
-	"time"
 )
 
 const (
@@ -39,16 +40,16 @@ type Stage struct {
 
 // StageVersion data
 type StageVersion struct {
-	ID           uint64     `json:"id" gorm:"primary_key"`
-	PvID         uint64     `json:"pvid" gorm:"type:int;not null"`
-	SID          uint64     `json:"sid" gorm:"type:int;not null"`
-	State        string     `json:"state" gorm:"column:state;type:varchar(20)"`
-	Detail       string     `json:"detail" gorm:"type:text;"`
-	Status       uint       `json:"status" gorm:"type:tinyint;default:0"`
-	Created      *time.Time `json:"created" `
-	Updated      *time.Time `json:"updated"`
-	Deleted      *time.Time `json:"deleted"`
-	MetaData     *Stage     `json:"-" sql:"-"`
+	ID           uint64        `json:"id" gorm:"primary_key"`
+	PvID         uint64        `json:"pvid" gorm:"type:int;not null"`
+	SID          uint64        `json:"sid" gorm:"type:int;not null"`
+	State        string        `json:"state" gorm:"column:state;type:varchar(20)"`
+	Detail       string        `json:"detail" gorm:"type:text;"`
+	Status       uint          `json:"status" gorm:"type:tinyint;default:0"`
+	Created      *time.Time    `json:"created" `
+	Updated      *time.Time    `json:"updated"`
+	Deleted      *time.Time    `json:"deleted"`
+	MetaData     *Stage        `json:"-" sql:"-"`
 	PointVersion *PointVersion `json:"-" sql:"-"`
 }
 

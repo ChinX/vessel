@@ -22,7 +22,7 @@ const (
 
 func checkClient() error {
 	if models.ETCD == nil {
-		if err := models.InitEtcd(); err != nil{
+		if err := models.InitEtcd(); err != nil {
 			return err
 		}
 	}
@@ -111,7 +111,7 @@ func SetDirTTL(key string, timeLife uint64) error {
 
 // Watch on etcd
 func Watch(key string) (client.Watcher, error) {
-	if err := checkClient(); err != nil{
+	if err := checkClient(); err != nil {
 		return nil, err
 	}
 	return client.NewKeysAPI(etcd).Watcher(key, &client.WatcherOptions{

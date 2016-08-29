@@ -12,7 +12,7 @@ import (
 
 var (
 	namespaceLock *sync.RWMutex
-	k8s     *unversioned.Client
+	k8s           *unversioned.Client
 )
 
 const (
@@ -26,7 +26,7 @@ func init() {
 
 func checkClient() error {
 	if models.K8S == nil {
-		if err := models.InitK8S(); err != nil{
+		if err := models.InitK8S(); err != nil {
 			return err
 		}
 	}

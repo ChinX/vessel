@@ -1,16 +1,16 @@
 package models
 
 import (
-	"time"
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/containerops/vessel/setting"
 	"github.com/coreos/etcd/client"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
 	"k8s.io/kubernetes/pkg/client/restclient"
 	"k8s.io/kubernetes/pkg/client/unversioned"
-	_ "github.com/go-sql-driver/mysql"
 )
 
 var (
