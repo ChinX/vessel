@@ -104,6 +104,7 @@ func Sync() error {
 	db.AutoMigrate(&Pipeline{})
 	db.AutoMigrate(&PipelineVersion{})
 	db.AutoMigrate(&Point{})
+	db.AutoMigrate(&PointVersion{})
 	db.AutoMigrate(&Stage{})
 	db.AutoMigrate(&StageVersion{})
 	return nil
