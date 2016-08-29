@@ -29,11 +29,11 @@ func Start(info interface{}, readyMap map[string]bool, finishChan chan *models.E
 	//TODO:Save stageVersion
 	stageVsn.State = models.StateReady
 
-	//res := kubeclt.CreateStage(metaData)
-	//if res.Result != models.ResultSuccess {
-	//	finishChan <- FillSchedulingResult(metaData.Name, res.Result, res.Detail)
-	//	return
-	//}
+	res := kubeclt.CreateStage(metaData)
+	if res.Result != models.ResultSuccess {
+		finishChan <- FillSchedulingResult(metaData.Name, res.Result, res.Detail)
+		return
+	}
 
 	//TODO:Update stageVersion
 	stageVsn.State = models.StateRunning
