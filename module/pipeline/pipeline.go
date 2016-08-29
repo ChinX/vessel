@@ -1,11 +1,12 @@
 package pipeline
 
 import (
-	"log"
 	"encoding/json"
+	"log"
 
 	"github.com/containerops/vessel/models"
 	"github.com/containerops/vessel/module/dependence"
+	"github.com/containerops/vessel/module/scheduler"
 )
 
 // CreatePipeline new pipeline with PipelineTemplate
@@ -47,10 +48,10 @@ func StartPipeline(pID uint64) []byte {
 		return bytes
 	}
 
-	pipelineVsn := models.PipelineVersion{
-		PID:pipeline.ID,
-		State:models.StateReady,
-		MateDate:pipeline,
+	pipelineVsn := &models.PipelineVersion{
+		PID:      pipeline.ID,
+		State:    models.StateReady,
+		MateDate: pipeline,
 	}
 
 	// Insert pipelineVersion
@@ -59,13 +60,21 @@ func StartPipeline(pID uint64) []byte {
 		return bytes
 	}
 
-	dependence.ParsePipeline()
+	executorMap := dependence.ParsePipelineVersion(pipelineVsn)
+	schedulingRes := scheduler.StartPoint(executorMap, models.StartPointMark)
+	bytes, success := outputResult(pipeline, pipelineVsn.ID, schedulingRes, "")
+	if success {
+		pipelineVsn.State = models.StateRunning
+		// TODO:update pipeline version status
+	} else {
+		//rollback by pipeline failed
+		go removePipeline(executorMap, pipelineVsn, "run pipeline error")
+	}
 
 	byteStr, _ := json.Marshal(pipeline)
 	log.Println(string(byteStr))
 	log.Printf("Start pipeline name = %v in namespace '%v' is over", pipeline.Namespace, pipeline.Name)
 	log.Print("Start job is done")
-	bytes, _ := outputResult(pipeline, 0, nil, "")
 	return bytes
 }
 
@@ -152,7 +161,7 @@ func GetPipeline(pID uint64) []byte {
 	return nil
 }
 
-func removePipeline(executorMap map[string]models.Executor, pipelineVersion *models.PipelineVersion, detail string) []*models.ExecutedResult {
+func removePipeline(executorMap map[string]interface{}, pipelineVersion *models.PipelineVersion, detail string) []*models.ExecutedResult {
 	//schedulingRes := scheduler.Stop(executorMap, models.StartPointMark)
 	//pipelineVersion.Status = models.StateDeleted
 	pipelineVersion.Detail = detail

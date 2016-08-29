@@ -12,56 +12,59 @@ import (
 	"github.com/containerops/vessel/utils/timer"
 )
 
-// ParsePipelineVersion parse exector
-func ParsePipelineVersion(pipelineVsn models.PipelineVersion) (map[string]models.Executor, error) {
+// ParsePipelineVersion parse executor map
+func ParsePipelineVersion(pipelineVsn *models.PipelineVersion) map[string]interface{} {
 	pipe := pipelineVsn.MateDate
 	hourglass := timer.InitHourglass(time.Duration(pipe.Timeout) * time.Second)
+	executorMap := make(map[string]interface{})
 
-	stageVsnMap := make(map[string]*models.StageVersion, 0)
+	//parse point
+	pointVsnMap := make(map[string]*models.PointVersion, 0)
+	for _, point := range pipe.Points {
+		triggers := utils.JSONStrToSlice(point.Triggers)
+		pointVsn := &models.PointVersion{
+			PvID:       pipelineVsn.ID,
+			PointID:    point.ID,
+			MateDate:   point,
+			Conditions: utils.JSONStrToSlice(point.Conditions),
+		}
+		if point.Type == models.EndPoint {
+			executorMap[models.EndPointMark] = pointVsn
+			continue
+		}
+		if point.Type == models.StartPoint {
+			pointVsn.Conditions = []string{models.StartPointMark}
+		}
+		for _, trigger := range triggers {
+			pointVsnMap[trigger] = pointVsn
+		}
+	}
+
+	//parse stage
 	for _, stage := range pipe.Stages {
-		stageVsn := models.StageVersion{
-			PvID:         pipe.ID,
+		stageVsn := &models.StageVersion{
+			PvID:         pipelineVsn.ID,
 			SID:          stage.ID,
 			MateDate:     stage,
 			Dependencies: utils.JSONStrToSlice(stage.Dependencies),
 		}
 		stage.Hourglass = hourglass
 		stage.PipelineName = pipe.Name
-		stageVsnMap[stage.Name] = stageVsn
-	}
-
-	//parse pointVersion from point
-	executorMap := make(map[string]*models.Executor)
-	for _, point := range pipe.Points {
-		pointVsn := &models.PointVersion{
-			PvID:       pipelineVsn.ID,
-			PointID:    point.ID,
-			MateDate:   point,
-			Triggers:   utils.JSONStrToSlice(point.Triggers),
-			Conditions: utils.JSONStrToSlice(point.Conditions),
-		}
-		for _, trigger := range pointVsn.Triggers {
-			filExecutorMapFromDependence(executorMap, trigger, stageVsnMap)
-			pointVsn.ExecutorMap[trigger] = stageVsnMap[trigger]
-		}
-		//executorMap[]
-	}
-	return nil
-}
-
-func filExecutorMapFromDependence(executorMap map[string]*models.Executor, trigger string, stageVsnMap map[string]*models.StageVersion) {
-	for _, stageVsn := range stageVsnMap {
-		for _, dependence := range stageVsn.Dependencies {
-			if dependence == trigger {
-				filExecutorMapFromDependence(executorMap, dependence, stageVsnMap)
-				executorMap[stageVsn.MateDate.Name] = stageVsn
+		pointVsn, ok := pointVsnMap[stage.Name]
+		if !ok {
+			pointVsn = &models.PointVersion{
+				Conditions: stageVsn.Dependencies,
 			}
+			pointVsnMap[stage.Name] = pointVsn
 		}
+		pointVsn.StageVersion = stageVsn
+		executorMap[stage.Name] = pointVsn
 	}
+	return executorMap
 }
 
 // CheckDependence check pipeline dependence
-func CheckDependence(pipeline models.Pipeline) error {
+func CheckDependence(pipeline *models.Pipeline) error {
 	conditionMap, err := checkPoints(pipeline.Points)
 	if err != nil {
 		return err

@@ -16,11 +16,6 @@ const (
 	ResultTimeout = "Timeout"
 )
 
-type Executor interface {
-	Start(readyMap map[string]bool, finishChan chan *ExecutedResult) bool
-	Stop(readyMap map[string]bool, finishChan chan *ExecutedResult) bool
-}
-
 // ExecutedResult executor operating result
 type ExecutedResult struct {
 	Name   string
