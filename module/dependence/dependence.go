@@ -4,36 +4,36 @@ import (
 	"errors"
 	"fmt"
 	"strings"
-
 	"time"
 
+	"encoding/json"
 	"github.com/containerops/vessel/models"
 	"github.com/containerops/vessel/utils"
 	"github.com/containerops/vessel/utils/timer"
+	"log"
 )
 
 // ParsePipelineVersion parse executor map
-func ParsePipelineVersion(pipelineVsn *models.PipelineVersion) map[string]interface{} {
-	pipe := pipelineVsn.MateDate
+func ParsePipelineVersion(pipelineVsn *models.PipelineVersion) []interface{} {
+	pipe := pipelineVsn.MetaData
 	hourglass := timer.InitHourglass(time.Duration(pipe.Timeout) * time.Second)
-	executorMap := make(map[string]interface{})
+	executorList := make([]interface{}, 0, len(pipe.Stages)+1)
 
 	//parse point
 	pointVsnMap := make(map[string]*models.PointVersion, 0)
+	var endPoint *models.PointVersion
 	for _, point := range pipe.Points {
 		triggers := utils.JSONStrToSlice(point.Triggers)
 		pointVsn := &models.PointVersion{
 			PvID:       pipelineVsn.ID,
 			PointID:    point.ID,
-			MateDate:   point,
 			Conditions: utils.JSONStrToSlice(point.Conditions),
+			MetaData:   point,
+			Kind:       point.Type,
 		}
 		if point.Type == models.EndPoint {
-			executorMap[models.EndPointMark] = pointVsn
+			endPoint = pointVsn
 			continue
-		}
-		if point.Type == models.StartPoint {
-			pointVsn.Conditions = []string{models.StartPointMark}
 		}
 		for _, trigger := range triggers {
 			pointVsnMap[trigger] = pointVsn
@@ -43,24 +43,27 @@ func ParsePipelineVersion(pipelineVsn *models.PipelineVersion) map[string]interf
 	//parse stage
 	for _, stage := range pipe.Stages {
 		stageVsn := &models.StageVersion{
-			PvID:         pipelineVsn.ID,
-			SID:          stage.ID,
-			MateDate:     stage,
-			Dependencies: utils.JSONStrToSlice(stage.Dependencies),
+			PvID:     pipelineVsn.ID,
+			SID:      stage.ID,
+			MetaData: stage,
 		}
 		stage.Hourglass = hourglass
 		stage.PipelineName = pipe.Name
 		pointVsn, ok := pointVsnMap[stage.Name]
 		if !ok {
 			pointVsn = &models.PointVersion{
-				Conditions: stageVsn.Dependencies,
+				Kind: models.TemporaryPoint,
+				Conditions: utils.JSONStrToSlice(stage.Dependencies),
 			}
 			pointVsnMap[stage.Name] = pointVsn
 		}
-		pointVsn.StageVersion = stageVsn
-		executorMap[stage.Name] = pointVsn
+		stageVsn.PointVersion = pointVsn
+		executorList = append(executorList, stageVsn)
 	}
-	return executorMap
+
+	return append(executorList, &models.StageVersion{
+		PointVersion: endPoint,
+	})
 }
 
 // CheckDependence check pipeline dependence
@@ -124,6 +127,8 @@ func checkStages(stages []*models.Stage, conditionMap map[string][]string) error
 		if _, ok := stageMap[stage.Name]; ok {
 			return fmt.Errorf("Stage name: %v already exist", stage.Name)
 		}
+		bytes, _ := json.Marshal(stage)
+		log.Println(string(bytes))
 		dependencies := strings.Split(stage.Dependencies, ",")
 		if conditions, ok := conditionMap[stage.Name]; ok {
 			dependencies = conditions

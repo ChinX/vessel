@@ -36,7 +36,7 @@ type PipelineVersion struct {
 	CreatedAt *time.Time `json:"created" `
 	UpdatedAt *time.Time `json:"updated"`
 	DeletedAt *time.Time `json:"deleted"`
-	MateDate  *Pipeline  `json:"-" sql:"-"`
+	MetaData  *Pipeline  `json:"-" sql:"-"`
 }
 
 // PipelineResult data

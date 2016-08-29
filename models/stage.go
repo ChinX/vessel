@@ -25,7 +25,7 @@ type Stage struct {
 	Name                string           `json:"name" binding:"Required" gorm:"type:varchar(20);not null;unique_index:idxs_namespace_name"`
 	PipelineName        string           `json:"-" sql:"-"`
 	Replicas            uint64           `json:"replicas" binding:"Required"`
-	Dependencies        string           `json:"dependences"`
+	Dependencies        string           `json:"dependencies"`
 	StatusCheckURL      string           `json:"statusCheckLink"`
 	StatusCheckInterval uint64           `json:"statusCheckInterval"`
 	StatusCheckCount    uint64           `json:"statusCheckCount"`
@@ -48,8 +48,8 @@ type StageVersion struct {
 	Created      *time.Time `json:"created" `
 	Updated      *time.Time `json:"updated"`
 	Deleted      *time.Time `json:"deleted"`
-	MateDate     *Stage     `json:"-" sql:"-"`
-	Dependencies []string   `json:"-" sql:"-"`
+	MetaData     *Stage     `json:"-" sql:"-"`
+	PointVersion *PointVersion `json:"-" sql:"-"`
 }
 
 // Artifact data

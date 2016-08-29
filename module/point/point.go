@@ -1,27 +1,18 @@
 package point
 
-import (
-	"github.com/containerops/vessel/module/stage"
-	"github.com/containerops/vessel/models"
-)
+import "github.com/containerops/vessel/models"
 
-func Start(info interface{}, readyMap map[string]bool, finishChan chan *models.ExecutedResult) bool {
-	pointVsn := info.(*models.PointVersion)
+func CheckCondition(pointVsn *models.PointVersion, readyMap map[string]bool) (bool, bool) {
+	meet := true
+	ended := false
+	if pointVsn.Kind == models.StartPoint {
+		return meet, ended
+	}
 	for _, condition := range pointVsn.Conditions {
-		if isReady, _ := readyMap[condition]; !isReady {
-			return false
+		if meet := readyMap[condition]; !meet{
+			return meet, ended
 		}
 	}
-	if pointVsn.MateDate.Type == models.EndPoint{
-		finishChan <- stage.FillSchedulingResult(models.EndPoint,models.ResultSuccess, "")
-	}else{
-		go stage.Start(pointVsn.StageVersion,finishChan)
-	}
-	return true
-}
-
-func Stop(info interface{}, readyMap map[string]bool, finishChan chan *models.ExecutedResult) bool {
-	pointVsn := info.(*models.PointVersion)
-	go stage.Stop(pointVsn.StageVersion,finishChan)
-	return true
+	ended = pointVsn.Kind == models.EndPoint
+	return meet, ended
 }

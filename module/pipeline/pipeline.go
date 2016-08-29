@@ -51,7 +51,7 @@ func StartPipeline(pID uint64) []byte {
 	pipelineVsn := &models.PipelineVersion{
 		PID:      pipeline.ID,
 		State:    models.StateReady,
-		MateDate: pipeline,
+		MetaData: pipeline,
 	}
 
 	// Insert pipelineVersion
@@ -161,7 +161,7 @@ func GetPipeline(pID uint64) []byte {
 	return nil
 }
 
-func removePipeline(executorMap map[string]interface{}, pipelineVersion *models.PipelineVersion, detail string) []*models.ExecutedResult {
+func removePipeline(executorList []interface{}, pipelineVersion *models.PipelineVersion, detail string) []*models.ExecutedResult {
 	//schedulingRes := scheduler.Stop(executorMap, models.StartPointMark)
 	//pipelineVersion.Status = models.StateDeleted
 	pipelineVersion.Detail = detail

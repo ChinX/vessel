@@ -10,6 +10,11 @@ const (
 	// EndPoint point type
 	EndPoint = "End"
 
+	// TemporaryPoint point type
+	TemporaryPoint = "Temporary"
+
+
+
 	// StartPointMark start mark
 	StartPointMark = "$StartPointMark$"
 	// EndPointMark end mark
@@ -31,18 +36,18 @@ type Point struct {
 
 // PointVersion data
 type PointVersion struct {
-	ID           uint64        `json:"id" gorm:"primary_key"`
-	PvID         uint64        `json:"pvid" gorm:"type:int;not null"`
-	PointID      uint64        `json:"PointID" gorm:"type:int;not null;index"`
-	State        string        `json:"state" gorm:"column:versionStatus;type:varchar(20);not null;"`
-	Detail       string        `json:"detail" gorm:"type:text;"`
-	Status       uint          `json:"status" gorm:"type:tinyint;default:0"`
-	CreatedAt    *time.Time    `json:"created" `
-	UpdatedAt    *time.Time    `json:"updated"`
-	DeletedAt    *time.Time    `json:"deleted"`
-	Conditions   []string      `json:"-" sql:"-"`
-	MateDate     *Point        `json:"-" sql:"-"`
-	StageVersion *StageVersion `json:"-" sql:"-"`
+	ID         uint64     `json:"id" gorm:"primary_key"`
+	PvID       uint64     `json:"pvid" gorm:"type:int;not null"`
+	PointID    uint64     `json:"PointID" gorm:"type:int;not null;index"`
+	State      string     `json:"state" gorm:"column:versionStatus;type:varchar(20);not null;"`
+	Detail     string     `json:"detail" gorm:"type:text;"`
+	Status     uint       `json:"status" gorm:"type:tinyint;default:0"`
+	CreatedAt  *time.Time `json:"created" `
+	UpdatedAt  *time.Time `json:"updated"`
+	DeletedAt  *time.Time `json:"deleted"`
+	Conditions []string   `json:"-" sql:"-"`
+	MetaData   *Point     `json:"-" sql:"-"`
+	Kind       string     `json:"-" sql:"-"`
 }
 
 // TableName point table name in db

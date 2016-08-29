@@ -5,43 +5,36 @@ import (
 	"log"
 
 	"github.com/containerops/vessel/models"
-	"github.com/containerops/vessel/module/point"
+	"github.com/containerops/vessel/module/stage"
 )
 
-type schedulerHand func(interface{}, map[string]bool, chan *models.ExecutedResult) bool
+type schedulerHand func(interface{}, map[string]bool, chan *models.ExecutedResult)
 
 // StartStage start point on scheduler
-func StartPoint(executorMap map[string]interface{}, startMark string) []*models.ExecutedResult {
-	return execute(executorMap, startMark, point.Start)
+func StartPoint(executorList []interface{}, startMark string) []*models.ExecutedResult {
+	return execute(executorList, startMark, stage.Start)
 }
 
 // StopPoint stop point on scheduler
-func StopPoint(executorMap map[string]interface{}, startMark string) []*models.ExecutedResult {
-	return execute(executorMap, startMark, point.Stop)
+func StopPoint(executorList []interface{}, startMark string) []*models.ExecutedResult {
+	return execute(executorList, startMark, stage.Stop)
 }
 
-func execute(executorMap map[string]interface{}, startMark string, handler schedulerHand) []*models.ExecutedResult {
-	count := len(executorMap)
+func execute(executorList []interface{}, startMark string, handler schedulerHand) []*models.ExecutedResult {
+	count := len(executorList)
 	readyMap := map[string]bool{startMark: true}
 	finishChan := make(chan *models.ExecutedResult, count)
 	resultList := make([]*models.ExecutedResult, 0, count)
 	running := true
 	for running {
-		for name, executor := range executorMap {
-			if _, ok := readyMap[name]; ok {
-				continue
-			}
-			if !handler(executor, readyMap, finishChan) {
-				continue
-			}
-			readyMap[name] = false
+		for _, executor := range executorList {
+			go handler(executor, readyMap, finishChan)
 		}
 		result := <-finishChan
 		resultList = append(resultList, result)
 		if result.Status != models.ResultSuccess {
 			running = false
 		} else {
-			readyMap[result.Name] = true
 			resultLen := len(resultList)
 			running = resultLen != count
 			log.Println(fmt.Sprintf("scheduler StartStage name = %v and finish num = %d", result.Name, resultLen))
