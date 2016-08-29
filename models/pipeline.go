@@ -22,8 +22,8 @@ type Pipeline struct {
 	CreatedAt *time.Time `json:"created" `
 	UpdatedAt *time.Time `json:"updated"`
 	DeletedAt *time.Time `json:"deleted"`
-	Stages    []*Stage   `json:"stages" binding:"Required" gorm:"-"`
-	Points    []*Point   `json:"points" binding:"Required" gorm:"-"`
+	Stages    []*Stage   `json:"stages" binding:"Required" sql:"-"`
+	Points    []*Point   `json:"points" binding:"Required" sql:"-"`
 }
 
 // PipelineVersion data
@@ -36,7 +36,7 @@ type PipelineVersion struct {
 	CreatedAt *time.Time `json:"created" `
 	UpdatedAt *time.Time `json:"updated"`
 	DeletedAt *time.Time `json:"deleted"`
-	MateDate  *Pipeline  `json:"-" gorm:"-"`
+	MateDate  *Pipeline  `json:"-" sql:"-"`
 }
 
 // PipelineResult data

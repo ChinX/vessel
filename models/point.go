@@ -40,9 +40,9 @@ type PointVersion struct {
 	CreatedAt    *time.Time    `json:"created" `
 	UpdatedAt    *time.Time    `json:"updated"`
 	DeletedAt    *time.Time    `json:"deleted"`
-	Conditions   []string      `json:"-" gorm:"-"`
-	MateDate     *Point        `json:"-" gorm:"-"`
-	StageVersion *StageVersion `json:"-" gorm:"-"`
+	Conditions   []string      `json:"-" sql:"-"`
+	MateDate     *Point        `json:"-" sql:"-"`
+	StageVersion *StageVersion `json:"-" sql:"-"`
 }
 
 // TableName point table name in db

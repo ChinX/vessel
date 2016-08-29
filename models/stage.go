@@ -23,9 +23,9 @@ type Stage struct {
 	PID                 uint64
 	Namespace           string           `json:"namespace" gorm:"type:varchar(20);not null;unique_index:idxs_namespace_name"`
 	Name                string           `json:"name" binding:"Required" gorm:"type:varchar(20);not null;unique_index:idxs_namespace_name"`
-	PipelineName        string           `json:"-" gorm:"-"`
+	PipelineName        string           `json:"-" sql:"-"`
 	Replicas            uint64           `json:"replicas" binding:"Required"`
-	Dependencies        string           `json:"dependence"`
+	Dependencies        string           `json:"dependences"`
 	StatusCheckURL      string           `json:"statusCheckLink"`
 	StatusCheckInterval uint64           `json:"statusCheckInterval"`
 	StatusCheckCount    uint64           `json:"statusCheckCount"`
@@ -34,7 +34,7 @@ type Stage struct {
 	EnvName             string           `json:"envName"`
 	EnvValue            string           `json:"envValue"`
 	Status              uint             `json:"-"`
-	Hourglass           *timer.Hourglass `json:"-" gorm:"-"`
+	Hourglass           *timer.Hourglass `json:"-" sql:"-"`
 }
 
 // StageVersion data
@@ -48,8 +48,8 @@ type StageVersion struct {
 	Created      *time.Time `json:"created" `
 	Updated      *time.Time `json:"updated"`
 	Deleted      *time.Time `json:"deleted"`
-	MateDate     *Stage     `json:"-" gorm:"-"`
-	Dependencies []string   `json:"-" gorm:"-"`
+	MateDate     *Stage     `json:"-" sql:"-"`
+	Dependencies []string   `json:"-" sql:"-"`
 }
 
 // Artifact data
